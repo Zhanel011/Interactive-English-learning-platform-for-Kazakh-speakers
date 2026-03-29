@@ -9,6 +9,7 @@ export default function Dictionary() {
   const [category,   setCategory]   = useState('all')
   const [loading,    setLoading]    = useState(true)
   const [learnedIds, setLearnedIds] = useState(new Set())
+  const [toast,      setToast]      = useState('')
 
   const fetchWords = useCallback(() => {
     const params = {}
@@ -25,15 +26,27 @@ export default function Dictionary() {
 
   useEffect(() => { fetchWords() }, [fetchWords])
 
+  const showToast = (msg) => {
+    setToast(msg)
+    setTimeout(() => setToast(''), 3000)
+  }
+
   const handleLearn = async (id) => {
     try {
       await api.post(`/words/${id}/learn`)
       setLearnedIds(s => new Set([...s, id]))
-    } catch {}
+      showToast('✅ Сөз үйренілді! Word learned!')
+    } catch {
+      showToast('❌ Қате пайда болды!')
+    }
   }
 
   return (
     <div>
+      {toast && (
+        <div style={styles.toast}>{toast}</div>
+      )}
+
       <h1 className="page-title">My Dictionary</h1>
       <p className="page-sub">{words.length} words · {learnedIds.size} learned</p>
 
@@ -83,15 +96,16 @@ export default function Dictionary() {
 }
 
 const styles = {
-  search:      { width: '100%', padding: '12px 16px', border: '2.5px solid #E5E5E5', borderRadius: 14, fontFamily: 'Nunito, sans-serif', fontSize: 14, fontWeight: 700, outline: 'none', marginBottom: 16, background: '#fff' },
+  toast:       { position: 'fixed', top: 20, right: 20, background: '#0F172A', color: '#fff', padding: '12px 20px', borderRadius: 14, fontWeight: 700, fontSize: 14, zIndex: 999, boxShadow: '0 8px 24px rgba(0,0,0,0.2)' },
+  search:      { width: '100%', padding: '14px 18px', border: '2px solid #E2E8F0', borderRadius: 16, fontFamily: 'Outfit, sans-serif', fontSize: 14, fontWeight: 600, outline: 'none', marginBottom: 16, background: '#fff' },
   filters:     { display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 20 },
-  filterBtn:   { padding: '6px 14px', border: '2px solid #E5E5E5', borderRadius: 99, background: '#fff', fontFamily: 'Nunito, sans-serif', fontSize: 12, fontWeight: 800, cursor: 'pointer', color: '#AFAFAF' },
-  filterActive:{ background: '#D7F5C3', borderColor: '#58CC02', color: '#46A302' },
-  wordCard:    { display: 'flex', alignItems: 'center', gap: 12, background: '#fff', borderRadius: 14, border: '2px solid #E5E5E5', padding: '14px 16px', marginBottom: 10 },
-  wordIcon:    { fontSize: 24, width: 36, textAlign: 'center' },
-  wordEng:     { fontSize: 16, fontWeight: 800, color: '#1f1f1f' },
-  wordKz:      { fontSize: 13, color: '#AFAFAF', fontWeight: 600 },
-  learnBtn:    { padding: '7px 14px', background: '#58CC02', border: 'none', borderRadius: 10, fontFamily: 'Nunito, sans-serif', fontSize: 13, fontWeight: 800, color: '#fff', cursor: 'pointer' },
-  learnedBtn:  { background: '#D7F5C3', color: '#46A302', cursor: 'default' },
-  empty:       { textAlign: 'center', padding: '40px 0', fontSize: 16, color: '#AFAFAF', fontWeight: 700 },
+  filterBtn:   { padding: '8px 16px', border: '2px solid #E2E8F0', borderRadius: 99, background: '#fff', fontFamily: 'Outfit, sans-serif', fontSize: 12, fontWeight: 700, cursor: 'pointer', color: '#94A3B8' },
+  filterActive:{ background: '#EDE9FE', borderColor: '#7C3AED', color: '#7C3AED' },
+  wordCard:    { display: 'flex', alignItems: 'center', gap: 14, background: '#fff', borderRadius: 16, border: '1px solid #E2E8F0', padding: '16px 18px', marginBottom: 10, boxShadow: '0 2px 8px rgba(0,0,0,0.04)' },
+  wordIcon:    { fontSize: 26, width: 40, textAlign: 'center' },
+  wordEng:     { fontSize: 16, fontWeight: 800, color: '#0F172A' },
+  wordKz:      { fontSize: 13, color: '#94A3B8', fontWeight: 600 },
+  learnBtn:    { padding: '8px 16px', background: 'linear-gradient(135deg, #7C3AED, #A855F7)', border: 'none', borderRadius: 12, fontFamily: 'Outfit, sans-serif', fontSize: 13, fontWeight: 700, color: '#fff', cursor: 'pointer' },
+  learnedBtn:  { background: '#EDE9FE', color: '#7C3AED', cursor: 'default' },
+  empty:       { textAlign: 'center', padding: '40px 0', fontSize: 16, color: '#94A3B8', fontWeight: 700 },
 }
