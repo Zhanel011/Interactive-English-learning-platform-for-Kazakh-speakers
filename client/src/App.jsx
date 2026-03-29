@@ -10,6 +10,7 @@ import Dictionary  from './pages/Dictionary.jsx'
 import Profile     from './pages/Profile.jsx'
 import Leaderboard from './pages/Leaderboard.jsx'
 import Admin       from './pages/Admin.jsx'
+import NotFound from './pages/NotFound.jsx'
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth()
@@ -46,6 +47,7 @@ export default function App() {
       <Route path="/admin" element={<AdminRoute><Layout /></AdminRoute>}>
         <Route index element={<Admin />} />
       </Route>
+      <Route path="*" element={<NotFound />} />
     </Routes>
   )
 }
