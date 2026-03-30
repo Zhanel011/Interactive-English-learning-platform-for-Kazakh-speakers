@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import api from '../api.js'
 
 const BADGES = [
@@ -13,10 +13,12 @@ const BADGES = [
 ]
 
 export default function Profile() {
-  const [profile, setProfile] = useState(null)
-  const [editing, setEditing] = useState(false)
-  const [newName, setNewName] = useState('')
-  const [toast,   setToast]   = useState('')
+  const [profile,    setProfile]    = useState(null)
+  const [editing,    setEditing]    = useState(false)
+  const [newName,    setNewName]    = useState('')
+  const [toast,      setToast]      = useState('')
+  const [uploading,  setUploading]  = useState(false)
+  const fileInputRef = useRef(null)
 
   useEffect(() => {
     api.get('/users/profile')
@@ -41,6 +43,39 @@ export default function Profile() {
     }
   }
 
+  const handleAvatarClick = () => {
+    fileInputRef.current.click()
+  }
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('❌ Файл тым үлкен! Максимум 5MB')
+      return
+    }
+
+    setUploading(true)
+    try {
+      const formData = new FormData()
+      formData.append('avatar', file)
+
+      const { data } = await api.post('/upload/avatar', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+
+      setProfile(p => ({ ...p, avatar: data.avatarUrl }))
+      showToast('✅ Аватар жаңартылды!')
+    } catch {
+      showToast('❌ Жүктеу қатесі!')
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const isImageUrl = (str) => str && str.startsWith('/uploads/')
+
   if (!profile) return <div style={{ textAlign: 'center', padding: 60, fontSize: 36 }}>🦜</div>
 
   const earned = BADGES.filter(b => b.req(profile))
@@ -55,17 +90,34 @@ export default function Profile() {
 
       {/* Profile header */}
       <div className="card" style={styles.profileHeader}>
-        <div style={styles.avatarWrap}>
-          <div style={styles.avatar}>{profile.avatar || '🦜'}</div>
+        {/* Avatar */}
+        <div style={styles.avatarWrap} onClick={handleAvatarClick}>
+          {isImageUrl(profile.avatar) ? (
+            <img
+              src={`http://localhost:3001${profile.avatar}`}
+              alt="avatar"
+              style={styles.avatarImg}
+            />
+          ) : (
+            <div style={styles.avatarEmoji}>{profile.avatar || '🦜'}</div>
+          )}
+          <div style={styles.avatarOverlay}>
+            {uploading ? '⏳' : '📷'}
+          </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            style={{ display: 'none' }}
+            onChange={handleFileChange}
+          />
         </div>
+        <p style={styles.avatarHint}>Click to change photo</p>
+
+        {/* Name */}
         {editing ? (
           <div style={{ display: 'flex', gap: 8, alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
-            <input
-              style={styles.nameInput}
-              value={newName}
-              onChange={e => setNewName(e.target.value)}
-              autoFocus
-            />
+            <input style={styles.nameInput} value={newName} onChange={e => setNewName(e.target.value)} autoFocus />
             <button style={styles.saveBtn} onClick={handleSave}>Save</button>
             <button style={styles.cancelBtn} onClick={() => setEditing(false)}>✕</button>
           </div>
@@ -122,8 +174,11 @@ export default function Profile() {
 const styles = {
   toast:        { position: 'fixed', top: 20, right: 20, background: '#0F172A', color: '#fff', padding: '12px 20px', borderRadius: 14, fontWeight: 700, fontSize: 14, zIndex: 999, boxShadow: '0 8px 24px rgba(0,0,0,0.2)' },
   profileHeader:{ textAlign: 'center', marginBottom: 20, padding: '32px 20px', background: 'linear-gradient(135deg, #EDE9FE, #F5F3FF)' },
-  avatarWrap:   { marginBottom: 12 },
-  avatar:       { fontSize: 72 },
+  avatarWrap:   { position: 'relative', width: 100, height: 100, margin: '0 auto 8px', cursor: 'pointer', borderRadius: '50%', overflow: 'hidden' },
+  avatarImg:    { width: 100, height: 100, borderRadius: '50%', objectFit: 'cover', border: '3px solid #7C3AED' },
+  avatarEmoji:  { width: 100, height: 100, borderRadius: '50%', background: 'linear-gradient(135deg, #EDE9FE, #DDD6FE)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 52, border: '3px solid #7C3AED' },
+  avatarOverlay:{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(124,58,237,0.7)', color: '#fff', textAlign: 'center', padding: '4px', fontSize: 16 },
+  avatarHint:   { fontSize: 12, color: '#94A3B8', marginBottom: 12 },
   profileName:  { fontSize: 24, fontWeight: 900, color: '#0F172A' },
   profileLevel: { fontSize: 13, color: '#94A3B8', fontWeight: 600, marginTop: 8 },
   editBtn:      { background: 'none', border: 'none', cursor: 'pointer', fontSize: 18 },

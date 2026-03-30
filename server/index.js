@@ -7,11 +7,16 @@ const app = express();
 app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 app.use(express.json());
 
+const path = require('path');
+app.use('/uploads', require('express').static(path.join(__dirname, 'uploads')));
+
 // Routes
 app.use('/api/auth',    require('./routes/auth'));
 app.use('/api/lessons', require('./routes/lessons'));
 app.use('/api/words',   require('./routes/words'));
 app.use('/api/users',   require('./routes/users'));
+
+app.use('/api/upload', require('./routes/upload'));
 
 // Health check
 app.get('/api/health', (_, res) => res.json({ status: 'ok', app: 'LinguaFlow API' }));

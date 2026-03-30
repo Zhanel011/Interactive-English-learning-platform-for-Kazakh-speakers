@@ -46,11 +46,6 @@ export default function Home() {
 
       {/* Stats */}
       <div style={styles.statsRow}>
-        <div style={styles.statCard}>
-          <div style={styles.statIcon}>🔥</div>
-          <div style={styles.statVal}>{user?.streak ?? 0}</div>
-          <div style={styles.statLabel}>Streak</div>
-        </div>
         <div style={{ ...styles.statCard, flex: 2, padding: '16px 24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
             <span style={{ fontSize: 13, fontWeight: 700, color: '#475569' }}>Daily XP</span>
