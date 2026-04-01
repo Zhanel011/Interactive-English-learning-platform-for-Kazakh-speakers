@@ -4,9 +4,13 @@ const cors    = require('cors');
 
 const app = express();
 
-app.use(cors({ 
-  origin: ['http://localhost:5173', 'https://linguaflow.vercel.app', '*'],
-  credentials: true 
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'https://interactive-english-learning-platfo.vercel.app',
+    'https://interactive-english-learning-platform-for-k.vercel.app'
+  ],
+  credentials: true
 }));
 
 app.use(express.json());
