@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router-dom'
 import api from '../api.js'
 
 export default function Admin() {
-  const { user }            = useAuth()
-  const navigate            = useNavigate()
-  const [users,   setUsers] = useState([])
+  const { user }              = useAuth()
+  const navigate              = useNavigate()
+  const [users,   setUsers]   = useState([])
   const [loading, setLoading] = useState(true)
   const [toast,   setToast]   = useState('')
 
@@ -28,7 +28,7 @@ export default function Admin() {
   }
 
   const handleDelete = async (id, name) => {
-    if (!confirm(`Delete ${name}?`)) return
+    if (!confirm(`Удалить ${name}?`)) return
     try {
       await api.delete(`/users/${id}`)
       setUsers(u => u.filter(x => x.id !== id))
@@ -43,7 +43,7 @@ export default function Admin() {
   const students = users.filter(u => u.role !== 'admin')
 
   return (
-    <div>
+    <div style={{ height: '100%', overflowY: 'auto', overflowX: 'hidden', padding: '24px 20px' }}>
       {toast && <div style={styles.toast}>{toast}</div>}
 
       <h1 className="page-title">⚙️ Admin Panel</h1>
@@ -74,7 +74,7 @@ export default function Admin() {
         </div>
       </div>
 
-      <div className="card" style={{ marginTop: 20, padding: 0, overflow: 'hidden' }}>
+      <div className="card" style={{ marginTop: 20, padding: 0, overflowX: 'auto', overflowY: 'visible' }}>
         <table style={styles.table}>
           <thead>
             <tr style={styles.thead}>
@@ -84,8 +84,8 @@ export default function Admin() {
               <th style={styles.th}>Streak</th>
               <th style={styles.th}>Сабақтар</th>
               <th style={styles.th}>Сөздер</th>
-              <th style={styles.th}>Тіркелген күн</th>
-              <th style={styles.th}></th>
+              <th style={styles.th}>Тіркелген</th>
+              <th style={styles.th}>Жою</th>
             </tr>
           </thead>
           <tbody>
@@ -113,7 +113,7 @@ export default function Admin() {
                 <td style={{ ...styles.td, fontWeight: 900, color: '#F59E0B' }}>🔥 {u.streak}</td>
                 <td style={{ ...styles.td, fontWeight: 900, color: '#0D9488' }}>{u.lessons_completed}</td>
                 <td style={{ ...styles.td, fontWeight: 900, color: '#3B82F6' }}>{u.words_learned}</td>
-                <td style={{ ...styles.td, color: '#94A3B8' }}>
+                <td style={{ ...styles.td, color: '#94A3B8', fontSize: 12 }}>
                   {new Date(u.created_at).toLocaleDateString('ru-RU')}
                 </td>
                 <td style={styles.td}>
@@ -131,12 +131,12 @@ export default function Admin() {
 }
 
 const styles = {
-  statsGrid:  { display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 12 },
+  statsGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 },
   statCard:   { textAlign: 'center', padding: '18px 12px' },
   statLabel:  { fontSize: 11, fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: 4 },
-  table:      { width: '100%', borderCollapse: 'collapse' },
+  table:      { width: '100%', borderCollapse: 'collapse', minWidth: 650 },
   thead:      { background: '#F8F7FF' },
-  th:         { padding: '12px 16px', textAlign: 'left', fontSize: 11, fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.05em' },
+  th:         { padding: '12px 16px', textAlign: 'left', fontSize: 11, fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' },
   tr:         { borderBottom: '1px solid #E2E8F0' },
   td:         { padding: '12px 16px', fontSize: 14 },
   userCell:   { display: 'flex', alignItems: 'center', gap: 10 },
@@ -144,6 +144,6 @@ const styles = {
   avatarImg:  { width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' },
   userName:   { fontWeight: 800, color: '#0F172A', fontSize: 14 },
   userEmail:  { fontSize: 12, color: '#94A3B8', fontWeight: 600 },
-  deleteBtn:  { background: '#FEE2E2', border: 'none', borderRadius: 8, padding: '6px 10px', cursor: 'pointer', fontSize: 14 },
+  deleteBtn:  { background: '#FEE2E2', border: 'none', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', fontSize: 16 },
   toast:      { position: 'fixed', top: 20, right: 20, background: '#0F172A', color: '#fff', padding: '12px 20px', borderRadius: 12, fontWeight: 700, fontSize: 14, zIndex: 999 },
 }
