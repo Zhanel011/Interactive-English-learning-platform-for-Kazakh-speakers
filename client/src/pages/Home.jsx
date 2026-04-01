@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import api from '../api.js'
+import { BookOpen, Hash, Palette, Coffee, Clock, MapPin, Leaf, Monitor, Star, ShoppingBag, Flower2, Plane, Lock, Zap, Target } from 'lucide-react'
 
 export default function Home() {
   const { user } = useAuth()
@@ -35,6 +36,25 @@ export default function Home() {
     { bg: 'linear-gradient(135deg, #10B981, #34D399)', shadow: 'rgba(16,185,129,0.3)' },
     { bg: 'linear-gradient(135deg, #8B5CF6, #C4B5FD)', shadow: 'rgba(139,92,246,0.3)' },
     { bg: 'linear-gradient(135deg, #EF4444, #F87171)', shadow: 'rgba(239,68,68,0.3)' },
+    { bg: 'linear-gradient(135deg, #F97316, #FB923C)', shadow: 'rgba(249,115,22,0.3)' },
+    { bg: 'linear-gradient(135deg, #06B6D4, #22D3EE)', shadow: 'rgba(6,182,212,0.3)' },
+    { bg: 'linear-gradient(135deg, #84CC16, #A3E635)', shadow: 'rgba(132,204,22,0.3)' },
+    { bg: 'linear-gradient(135deg, #6366F1, #818CF8)', shadow: 'rgba(99,102,241,0.3)' },
+  ]
+
+  const lessonIcons = [
+    <BookOpen size={36} color="white" />,
+    <Hash size={36} color="white" />,
+    <ShoppingBag size={36} color="white" />,
+    <Palette size={36} color="white" />,
+    <Coffee size={36} color="white" />,
+    <Flower2 size={36} color="white" />,
+    <Clock size={36} color="white" />,
+    <MapPin size={36} color="white" />,
+    <Plane size={36} color="white" />,
+    <Leaf size={36} color="white" />,
+    <Monitor size={36} color="white" />,
+    <Star size={36} color="white" />,
   ]
 
   if (loading) return <div style={{ textAlign: 'center', padding: 60, fontSize: 36 }}>🦜</div>
@@ -56,12 +76,12 @@ export default function Home() {
           </div>
         </div>
         <div style={styles.statCard}>
-          <div style={styles.statIcon}>⚡</div>
+          <Zap size={24} color="#7C3AED" style={{ marginBottom: 4 }} />
           <div style={styles.statVal}>{user?.xp ?? 0}</div>
           <div style={styles.statLabel}>Total XP</div>
         </div>
         <div style={styles.statCard}>
-          <div style={styles.statIcon}>🎯</div>
+          <Target size={24} color="#10B981" style={{ marginBottom: 4 }} />
           <div style={styles.statVal}>{lessons.filter(l => l.completed).length}/{lessons.length}</div>
           <div style={styles.statLabel}>Lessons</div>
         </div>
@@ -69,7 +89,7 @@ export default function Home() {
 
       {/* Unit badge */}
       <div style={styles.unitRow}>
-        <div style={styles.unitBadge}>📚 Unit 1 — Basics & Kazakh Culture</div>
+        <div style={styles.unitBadge}>Unit 1 — Basics & Kazakh Culture</div>
       </div>
 
       {/* Lesson cards grid */}
@@ -90,7 +110,12 @@ export default function Home() {
               }}
               onClick={() => !locked && navigate(`/home/quiz/${lesson.id}`)}
             >
-              <div style={styles.cardIcon}>{locked ? '🔒' : lesson.icon}</div>
+              <div style={styles.cardIcon}>
+                {locked
+                  ? <Lock size={36} color="#94A3B8" />
+                  : lessonIcons[i % lessonIcons.length]
+                }
+              </div>
               <div style={{ ...styles.cardTitle, color: locked ? '#94A3B8' : '#fff' }}>
                 {lesson.title}
               </div>
@@ -114,14 +139,13 @@ export default function Home() {
 const styles = {
   statsRow:   { display: 'flex', gap: 12, marginBottom: 28, alignItems: 'stretch' },
   statCard:   { background: '#fff', borderRadius: 16, border: '1px solid #E2E8F0', padding: '16px', textAlign: 'center', flex: 1, boxShadow: '0 2px 8px rgba(124,58,237,0.06)' },
-  statIcon:   { fontSize: 24, marginBottom: 4 },
   statVal:    { fontSize: 22, fontWeight: 900, color: '#0F172A' },
   statLabel:  { fontSize: 11, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: 2 },
   unitRow:    { marginBottom: 20 },
   unitBadge:  { display: 'inline-flex', alignItems: 'center', gap: 8, background: 'linear-gradient(135deg, #EDE9FE, #F3E8FF)', color: '#7C3AED', padding: '10px 20px', borderRadius: 99, fontSize: 14, fontWeight: 800, border: '1px solid #DDD6FE' },
   grid:       { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 },
   lessonCard: { borderRadius: 20, padding: '24px 20px', transition: 'all 0.2s', position: 'relative', overflow: 'hidden' },
-  cardIcon:   { fontSize: 36, marginBottom: 12 },
+  cardIcon:   { marginBottom: 12 },
   cardTitle:  { fontSize: 16, fontWeight: 800, marginBottom: 6 },
   cardSub:    { fontSize: 12, fontWeight: 600, marginBottom: 16 },
   doneBadge:  { display: 'inline-block', background: 'rgba(255,255,255,0.25)', color: '#fff', padding: '4px 12px', borderRadius: 99, fontSize: 11, fontWeight: 800 },

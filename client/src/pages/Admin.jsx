@@ -40,7 +40,6 @@ export default function Admin() {
 
   if (loading) return <div style={{ textAlign: 'center', padding: 60, fontSize: 36 }}>🦜</div>
 
-  // Тек studentтар
   const students = users.filter(u => u.role !== 'admin')
 
   return (
@@ -50,33 +49,31 @@ export default function Admin() {
       <h1 className="page-title">⚙️ Admin Panel</h1>
       <p className="page-sub">Барлық студенттердің статистикасы</p>
 
-      {/* Жалпы статистика */}
       <div style={styles.statsGrid}>
         <div className="card" style={styles.statCard}>
-          <div style={{ fontSize: 28, fontWeight: 900, color: '#58CC02' }}>{students.length}</div>
+          <div style={{ fontSize: 28, fontWeight: 900, color: '#7C3AED' }}>{students.length}</div>
           <div style={styles.statLabel}>Студенттер саны</div>
         </div>
         <div className="card" style={styles.statCard}>
-          <div style={{ fontSize: 28, fontWeight: 900, color: '#CE82FF' }}>
+          <div style={{ fontSize: 28, fontWeight: 900, color: '#A855F7' }}>
             {students.reduce((s, u) => s + Number(u.xp), 0).toLocaleString()}
           </div>
           <div style={styles.statLabel}>Жалпы XP</div>
         </div>
         <div className="card" style={styles.statCard}>
-          <div style={{ fontSize: 28, fontWeight: 900, color: '#1CB0F6' }}>
+          <div style={{ fontSize: 28, fontWeight: 900, color: '#0D9488' }}>
             {students.reduce((s, u) => s + Number(u.lessons_completed), 0)}
           </div>
           <div style={styles.statLabel}>Өткен сабақтар</div>
         </div>
         <div className="card" style={styles.statCard}>
-          <div style={{ fontSize: 28, fontWeight: 900, color: '#FF9600' }}>
+          <div style={{ fontSize: 28, fontWeight: 900, color: '#F59E0B' }}>
             {students.reduce((s, u) => s + Number(u.words_learned), 0)}
           </div>
           <div style={styles.statLabel}>Үйренген сөздер</div>
         </div>
       </div>
 
-      {/* Студенттер кестесі */}
       <div className="card" style={{ marginTop: 20, padding: 0, overflow: 'hidden' }}>
         <table style={styles.table}>
           <thead>
@@ -93,10 +90,16 @@ export default function Admin() {
           </thead>
           <tbody>
             {students.map((u, i) => (
-              <tr key={u.id} style={{ ...styles.tr, background: i % 2 === 0 ? '#fff' : '#F7F7F7' }}>
+              <tr key={u.id} style={{ ...styles.tr, background: i % 2 === 0 ? '#fff' : '#F8F7FF' }}>
                 <td style={styles.td}>
                   <div style={styles.userCell}>
-                    <span style={styles.avatar}>{u.avatar || '🦜'}</span>
+                    <div style={styles.avatarWrap}>
+                      {u.avatar && u.avatar.startsWith('/uploads/') ? (
+                        <img src={`https://interactive-english-learning-platform.onrender.com${u.avatar}`} alt="avatar" style={styles.avatarImg} />
+                      ) : (
+                        <span style={{ fontSize: 22 }}>{u.avatar || '🦜'}</span>
+                      )}
+                    </div>
                     <div>
                       <div style={styles.userName}>{u.name}</div>
                       <div style={styles.userEmail}>{u.email}</div>
@@ -106,11 +109,11 @@ export default function Admin() {
                 <td style={styles.td}>
                   <span className={`level-badge level-${u.level?.toLowerCase()}`}>{u.level}</span>
                 </td>
-                <td style={{ ...styles.td, fontWeight: 900, color: '#CE82FF' }}>{Number(u.xp).toLocaleString()}</td>
-                <td style={{ ...styles.td, fontWeight: 900, color: '#FF9600' }}>🔥 {u.streak}</td>
-                <td style={{ ...styles.td, fontWeight: 900, color: '#58CC02' }}>{u.lessons_completed}</td>
-                <td style={{ ...styles.td, fontWeight: 900, color: '#1CB0F6' }}>{u.words_learned}</td>
-                <td style={{ ...styles.td, color: '#AFAFAF' }}>
+                <td style={{ ...styles.td, fontWeight: 900, color: '#7C3AED' }}>{Number(u.xp).toLocaleString()}</td>
+                <td style={{ ...styles.td, fontWeight: 900, color: '#F59E0B' }}>🔥 {u.streak}</td>
+                <td style={{ ...styles.td, fontWeight: 900, color: '#0D9488' }}>{u.lessons_completed}</td>
+                <td style={{ ...styles.td, fontWeight: 900, color: '#3B82F6' }}>{u.words_learned}</td>
+                <td style={{ ...styles.td, color: '#94A3B8' }}>
                   {new Date(u.created_at).toLocaleDateString('ru-RU')}
                 </td>
                 <td style={styles.td}>
@@ -130,16 +133,17 @@ export default function Admin() {
 const styles = {
   statsGrid:  { display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 12 },
   statCard:   { textAlign: 'center', padding: '18px 12px' },
-  statLabel:  { fontSize: 11, fontWeight: 800, color: '#AFAFAF', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: 4 },
+  statLabel:  { fontSize: 11, fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: 4 },
   table:      { width: '100%', borderCollapse: 'collapse' },
-  thead:      { background: '#F7F7F7' },
-  th:         { padding: '12px 16px', textAlign: 'left', fontSize: 11, fontWeight: 800, color: '#AFAFAF', textTransform: 'uppercase', letterSpacing: '0.05em' },
-  tr:         { borderBottom: '1px solid #E5E5E5' },
+  thead:      { background: '#F8F7FF' },
+  th:         { padding: '12px 16px', textAlign: 'left', fontSize: 11, fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.05em' },
+  tr:         { borderBottom: '1px solid #E2E8F0' },
   td:         { padding: '12px 16px', fontSize: 14 },
   userCell:   { display: 'flex', alignItems: 'center', gap: 10 },
-  avatar:     { fontSize: 24 },
-  userName:   { fontWeight: 800, color: '#1f1f1f', fontSize: 14 },
-  userEmail:  { fontSize: 12, color: '#AFAFAF', fontWeight: 600 },
-  deleteBtn:  { background: '#FFEAEA', border: 'none', borderRadius: 8, padding: '6px 10px', cursor: 'pointer', fontSize: 14 },
-  toast:      { position: 'fixed', top: 20, right: 20, background: '#1f1f1f', color: '#fff', padding: '12px 20px', borderRadius: 12, fontWeight: 700, fontSize: 14, zIndex: 999 },
+  avatarWrap: { width: 40, height: 40, borderRadius: '50%', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: '#EDE9FE' },
+  avatarImg:  { width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' },
+  userName:   { fontWeight: 800, color: '#0F172A', fontSize: 14 },
+  userEmail:  { fontSize: 12, color: '#94A3B8', fontWeight: 600 },
+  deleteBtn:  { background: '#FEE2E2', border: 'none', borderRadius: 8, padding: '6px 10px', cursor: 'pointer', fontSize: 14 },
+  toast:      { position: 'fixed', top: 20, right: 20, background: '#0F172A', color: '#fff', padding: '12px 20px', borderRadius: 12, fontWeight: 700, fontSize: 14, zIndex: 999 },
 }

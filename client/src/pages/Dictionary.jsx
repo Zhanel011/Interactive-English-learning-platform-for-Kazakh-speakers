@@ -79,7 +79,7 @@ export default function Dictionary() {
             <span style={styles.wordIcon}>{word.icon || '📝'}</span>
             <div style={{ flex: 1 }}>
               <div style={styles.wordEng}>{word.english}</div>
-              <div style={styles.wordKz}>{word.kazakh} · {word.russian}</div>
+              <div style={styles.wordKz}>{word.kazakh}</div>
             </div>
             <span className={`level-badge level-${word.level.toLowerCase()}`}>{word.level}</span>
             <button
@@ -109,3 +109,4 @@ const styles = {
   learnedBtn:  { background: '#EDE9FE', color: '#7C3AED', cursor: 'default' },
   empty:       { textAlign: 'center', padding: '40px 0', fontSize: 16, color: '#94A3B8', fontWeight: 700 },
 }
+

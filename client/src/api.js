@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const api = axios.create({ baseURL: '/api' });
+const BACKEND = 'https://interactive-english-learning-platform.onrender.com';
+
+const api = axios.create({ baseURL: `${BACKEND}/api` });
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
@@ -19,4 +21,5 @@ api.interceptors.response.use(
   }
 );
 
+export const BACKEND_URL = BACKEND;
 export default api;

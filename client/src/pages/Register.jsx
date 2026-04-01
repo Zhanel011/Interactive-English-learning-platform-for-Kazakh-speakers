@@ -39,7 +39,7 @@ export default function Register() {
   return (
     <div style={styles.page}>
       <div style={styles.card}>
-        <div style={styles.logo}>🦜</div>
+                <img src="/linguaflow_logo.png" alt="LinguaFlow" style={{ width: 130, height: 130, objectFit: 'contain', display: 'block', margin: '0 auto 8px' }} />
         <h1 style={styles.title}>Create account</h1>
         <p style={styles.sub}>Start your English journey today</p>
 

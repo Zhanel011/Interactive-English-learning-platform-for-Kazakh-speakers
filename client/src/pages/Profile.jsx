@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import api from '../api.js'
 
+const BACKEND = 'https://interactive-english-learning-platform.onrender.com'
+
 const BADGES = [
   { icon: '⚡', name: 'First Lesson',  req: (p) => p.lessons_completed >= 1 },
   { icon: '📚', name: '10 Lessons',    req: (p) => p.lessons_completed >= 10 },
@@ -13,11 +15,11 @@ const BADGES = [
 ]
 
 export default function Profile() {
-  const [profile,    setProfile]    = useState(null)
-  const [editing,    setEditing]    = useState(false)
-  const [newName,    setNewName]    = useState('')
-  const [toast,      setToast]      = useState('')
-  const [uploading,  setUploading]  = useState(false)
+  const [profile,   setProfile]   = useState(null)
+  const [editing,   setEditing]   = useState(false)
+  const [newName,   setNewName]   = useState('')
+  const [toast,     setToast]     = useState('')
+  const [uploading, setUploading] = useState(false)
   const fileInputRef = useRef(null)
 
   useEffect(() => {
@@ -43,28 +45,22 @@ export default function Profile() {
     }
   }
 
-  const handleAvatarClick = () => {
-    fileInputRef.current.click()
-  }
+  const handleAvatarClick = () => fileInputRef.current.click()
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0]
     if (!file) return
-
     if (file.size > 5 * 1024 * 1024) {
       showToast('❌ Файл тым үлкен! Максимум 5MB')
       return
     }
-
     setUploading(true)
     try {
       const formData = new FormData()
       formData.append('avatar', file)
-
       const { data } = await api.post('/upload/avatar', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
-
       setProfile(p => ({ ...p, avatar: data.avatarUrl }))
       showToast('✅ Аватар жаңартылды!')
     } catch {
@@ -88,33 +84,18 @@ export default function Profile() {
       <h1 className="page-title">Profile</h1>
       <p className="page-sub">Your learning stats</p>
 
-      {/* Profile header */}
       <div className="card" style={styles.profileHeader}>
-        {/* Avatar */}
         <div style={styles.avatarWrap} onClick={handleAvatarClick}>
           {isImageUrl(profile.avatar) ? (
-            <img
-              src={`http://localhost:3001${profile.avatar}`}
-              alt="avatar"
-              style={styles.avatarImg}
-            />
+            <img src={`${BACKEND}${profile.avatar}`} alt="avatar" style={styles.avatarImg} />
           ) : (
             <div style={styles.avatarEmoji}>{profile.avatar || '🦜'}</div>
           )}
-          <div style={styles.avatarOverlay}>
-            {uploading ? '⏳' : '📷'}
-          </div>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            style={{ display: 'none' }}
-            onChange={handleFileChange}
-          />
+          <div style={styles.avatarOverlay}>{uploading ? '⏳' : '📷'}</div>
+          <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
         </div>
         <p style={styles.avatarHint}>Click to change photo</p>
 
-        {/* Name */}
         {editing ? (
           <div style={{ display: 'flex', gap: 8, alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
             <input style={styles.nameInput} value={newName} onChange={e => setNewName(e.target.value)} autoFocus />
@@ -133,12 +114,11 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* Stats */}
       <div style={styles.statsGrid}>
         {[
-          { val: profile.xp,                label: 'Total XP',      color: '#7C3AED', icon: '⚡' },
-          { val: profile.lessons_completed,  label: 'Lessons Done',  color: '#10B981', icon: '📚' },
-          { val: profile.words_learned,      label: 'Words Learned', color: '#0D9488', icon: '📖' },
+          { val: profile.xp,               label: 'Total XP',      color: '#7C3AED', icon: '⚡' },
+          { val: profile.lessons_completed, label: 'Lessons Done',  color: '#10B981', icon: '📚' },
+          { val: profile.words_learned,     label: 'Words Learned', color: '#0D9488', icon: '📖' },
         ].map(s => (
           <div key={s.label} className="card" style={styles.statCard}>
             <div style={styles.statIcon}>{s.icon}</div>
@@ -148,7 +128,6 @@ export default function Profile() {
         ))}
       </div>
 
-      {/* Achievements */}
       <div style={styles.sectionRow}>
         <span style={styles.sectionTitle}>🏆 Achievements</span>
         <span style={styles.sectionSub}>{earned.length}/{BADGES.length} earned</span>
